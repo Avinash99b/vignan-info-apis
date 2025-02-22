@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\shaik\\IdeaProjects\\Vig-Info\\logs\\.0126e7ce6cd72d3e6444acada1f1450895716278-audit.json",
+    "files": [
+        {
+            "date": 1740215132565,
+            "name": "C:\\Users\\shaik\\IdeaProjects\\Vig-Info\\logs\\bma-22-02-2025.log",
+            "hash": "1b45690548120b1fc9dcdff3b1073a0526f42a449cf3774e119a7c2db05f3bae"
+        }
+    ],
+    "hashType": "sha256"
+}
