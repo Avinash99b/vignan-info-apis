@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\bathu\\IdeaProjects\\Vignan Info Apis\\logs\\.9a8e955344c34918268544a3cf899d569c893df2-audit.json",
+    "files": [
+        {
+            "date": 1740281556098,
+            "name": "C:\\Users\\bathu\\IdeaProjects\\Vignan Info Apis\\logs\\bma-23-02-2025.log",
+            "hash": "f704b36d895ef6a9124ff67d7c8814e8d054d1cf6d9f945697554f243e91c595"
+        }
+    ],
+    "hashType": "sha256"
+}
