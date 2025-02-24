@@ -11,6 +11,7 @@ export interface Block {
     id: number;
     name: string;
     description: string;
+    image_url: string;
 }
 
 // Lab Interface
@@ -34,7 +35,7 @@ export interface System {
 
 // Reported Problem Interface
 export interface ReportedProblem {
-    id:number
+    id: number
     system_id: number; // References System.id
     problem: string;
     reporter_id: string; // References User.id
