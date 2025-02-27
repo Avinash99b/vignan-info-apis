@@ -14,8 +14,11 @@ router.get('/:systemId', async (req, res) => {
 
     const pool = Database.getPool();
 
-    const queryResult = await pool.query<Lab>("Select * from systems where id=$1",[systemId])
+    const queryResult = await pool.query<Lab>("Select * from systems inner join labs l on l.id = systems.lab_id where systems.id=$1",[systemId])
 
+    if(queryResult.rowCount ===0){
+        return req.forwardWithError("Not Found",404)
+    }
     res.send(queryResult.rows[0])
 })
 

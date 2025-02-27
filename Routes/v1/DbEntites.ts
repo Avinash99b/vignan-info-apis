@@ -12,6 +12,7 @@ export interface Block {
     name: string;
     description: string;
     image_url: string;
+    floors:string;
 }
 
 // Lab Interface
@@ -21,6 +22,7 @@ export interface Lab {
     description: string;
     block_id: number; // References Block.id
     incharge_id: string; // References User.id
+    floor:number;
 }
 
 // System Interface
