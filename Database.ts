@@ -1,6 +1,6 @@
 import client from "pg"
 class Database{
-    private static pool = new client.Client({
+    private static pool = new client.Pool({
         user: 'postgres',
         host: '127.0.0.1',
         database: 'vig_info',

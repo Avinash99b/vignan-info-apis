@@ -60,4 +60,64 @@ router.get('/:labId/systems', async (req, res) => {
     }
     res.send(queryResult.rows)
 })
+
+router.post('/',async (req,res)=>{
+    let {name,des,block_id,incharge_id,floor}=req.body
+
+    if(!name || name.length<3){
+        return req.forwardWithError("Name is Required")
+    }
+
+    if(!des || des.length<3){
+        return req.forwardWithError("Description is Required")
+    }
+
+    name = Sanitizer.sanitizeString(name)
+    des = Sanitizer.sanitizeString(des)
+    if(!Sanitizer.isValidNumber(block_id)){
+        return req.forwardWithError("Invalid Block Id")
+    }
+
+    if(!incharge_id || incharge_id.length!==10){
+        return req.forwardWithError("Incharge Id is Required")
+    }
+
+    incharge_id = Sanitizer.sanitizeString(incharge_id)
+
+    if(!Sanitizer.isValidNumber(floor)){
+        return req.forwardWithError("Invalid Floor No")
+    }
+
+    const pool = Database.getPool()
+
+    const client = await pool.connect()
+
+    try{
+        const inchargeQuery = await client.query("Select * from users where id=$1",[incharge_id])
+        if(inchargeQuery.rowCount===0){
+            return req.forwardWithError("Incharge Not Found",404)
+        }
+
+        const blockQuery = await client.query("Select * from blocks where id=$1",[block_id])
+        if(blockQuery.rowCount===0){
+            return req.forwardWithError("Block Not Found",404)
+        }
+
+        const block = blockQuery.rows[0]
+
+        if(block.floor_count<floor){
+            return req.forwardWithError("Invalid Floor No")
+        }
+
+        const queryResult = await client.query<Lab>("Insert into labs(name,description,block_id,incharge_id,floor) values($1,$2,$3,$4,$5) returning *",[name,des,block_id,incharge_id,floor])
+        if(queryResult.rowCount===0){
+            return req.forwardWithError("Failed to Create Lab")
+        }
+        return req.forwardWithMessage("Lab Created Successfully")
+    }catch (e){
+        return req.forwardWithError("Failed to Create Lab")
+    }finally {
+        client.release()
+    }
+})
 export default router;
