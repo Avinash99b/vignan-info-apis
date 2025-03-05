@@ -8,21 +8,26 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
     const pool = Database.getPool();
-    let {blockId, floor} = req.query
+    let {blockId, floors} = req.query
+
+    console.log(floors)
+
     if (!Sanitizer.isValidNumber(Number(blockId))) {
         return req.forwardWithError("Invalid Block Id")
     }
-    if(!floor){
-        floor = "0"
+    if(!floors){
+        floors = ["1"]
     }
-    if (!Sanitizer.isValidNumber(Number(floor))) {
-        return req.forwardWithError("Invalid Floor No")
+    if(!Array.isArray(floors)){
+        floors = [floors]
     }
+
+
     let queryResult: QueryResult;
-    if (Number(floor) === 0) {
+    if (floors.length === 0) {
         queryResult = await pool.query<Lab>("Select * from labs where block_id = $1", [blockId])
     } else {
-        queryResult = await pool.query<Lab>("Select * from labs where block_id = $1 and floor = $2", [blockId, floor])
+        queryResult = await pool.query<Lab>("Select * from labs where block_id = $1 and floor = Any($2)", [blockId, floors])
     }
     res.send(queryResult.rows)
 })
@@ -62,7 +67,7 @@ router.get('/:labId/systems', async (req, res) => {
 })
 
 router.post('/',async (req,res)=>{
-    let {name,des,block_id,incharge_id,floor}=req.body
+    let {name,des,block_id,incharge_mob_no,floor}=req.body
 
     if(!name || name.length<3){
         return req.forwardWithError("Name is Required")
@@ -78,11 +83,11 @@ router.post('/',async (req,res)=>{
         return req.forwardWithError("Invalid Block Id")
     }
 
-    if(!incharge_id || incharge_id.length!==10){
-        return req.forwardWithError("Incharge Id is Required")
+    if(!incharge_mob_no || incharge_mob_no.length!==10){
+        return req.forwardWithError("Incharge Mobile No is Required")
     }
 
-    incharge_id = Sanitizer.sanitizeString(incharge_id)
+    incharge_mob_no = Sanitizer.sanitizeString(incharge_mob_no)
 
     if(!Sanitizer.isValidNumber(floor)){
         return req.forwardWithError("Invalid Floor No")
@@ -93,10 +98,6 @@ router.post('/',async (req,res)=>{
     const client = await pool.connect()
 
     try{
-        const inchargeQuery = await client.query("Select * from users where id=$1",[incharge_id])
-        if(inchargeQuery.rowCount===0){
-            return req.forwardWithError("Incharge Not Found",404)
-        }
 
         const blockQuery = await client.query("Select * from blocks where id=$1",[block_id])
         if(blockQuery.rowCount===0){
@@ -109,7 +110,7 @@ router.post('/',async (req,res)=>{
             return req.forwardWithError("Invalid Floor No")
         }
 
-        const queryResult = await client.query<Lab>("Insert into labs(name,description,block_id,incharge_id,floor) values($1,$2,$3,$4,$5) returning *",[name,des,block_id,incharge_id,floor])
+        const queryResult = await client.query<Lab>("Insert into labs(name,description,block_id,incharge_id,floor) values($1,$2,$3,$4,$5)",[name,des,block_id,incharge_mob_no,floor])
         if(queryResult.rowCount===0){
             return req.forwardWithError("Failed to Create Lab")
         }

@@ -21,7 +21,7 @@ export interface Lab {
     name: string;
     description: string;
     block_id: number; // References Block.id
-    incharge_id: string; // References User.id
+    incharge_no: string; // References User.id
     floor:number;
 }
 
@@ -33,6 +33,8 @@ export interface System {
     download_speed: number;
     upload_speed: number;
     ping: number;
+    keyboard_working: boolean;
+    mouse_working: boolean;
 }
 
 // Reported Problem Interface

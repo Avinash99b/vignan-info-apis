@@ -54,7 +54,11 @@ router.patch('/:systemId', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    const {lab_id, working} = req.body
+    const {lab_id,
+        working,
+        keyboard_working,
+        mouse_working,
+    } = req.body
 
     if (!Sanitizer.isValidNumber(Number(lab_id))) {
         return req.forwardWithError("Invalid Lab Id")
@@ -68,6 +72,22 @@ router.post('/', async (req, res) => {
         return req.forwardWithError("Invalid Working Status")
     }
 
+    if(keyboard_working === undefined){
+        return req.forwardWithError("Keyboard Working Status is Required")
+    }
+
+    if(keyboard_working !== true && keyboard_working !== false){
+        return req.forwardWithError("Invalid Keyboard Working Status")
+    }
+
+    if(mouse_working === undefined){
+        return req.forwardWithError("Mouse Working Status is Required")
+    }
+
+    if(mouse_working !== true && mouse_working !== false){
+        return req.forwardWithError("Invalid Mouse Working Status")
+    }
+
     const pool = Database.getPool();
 
     const labQueryResult = await pool.query<Lab>("Select * from labs where id=$1", [lab_id])
@@ -75,7 +95,7 @@ router.post('/', async (req, res) => {
         return req.forwardWithError("Lab Not Found", 404)
     }
 
-    const queryResult = await pool.query<System>("insert into systems(lab_id,working) values($1,$2) returning *", [lab_id, working])
+    const queryResult = await pool.query<System>("insert into systems(lab_id,working,keyboard_working,mouse_working) values($1,$2,$3,$4) returning *", [lab_id, working,keyboard_working,mouse_working])
     if (queryResult.rowCount === 0) {
         return req.forwardWithError("System Creation Failed")
     }

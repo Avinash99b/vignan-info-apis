@@ -2,6 +2,7 @@ import express from "express";
 import Sanitizer from "../../../Sanitizer";
 import UserManager from "../../../Managers/UserManager";
 import Auth from "../../../Managers/Auth";
+import Database from "../../../Database";
 
 const router = express.Router();
 
@@ -35,4 +36,25 @@ router.post('/login', async (req, res) => {
     res.send({authToken: authToken})
 });
 
+
+router.post('/register', async (req, res) => {
+    const {id,mobileNo} = req.body;
+
+    if(!Sanitizer.isValidRegNo(id)){
+        return req.forwardWithError("Invalid Register No");
+    }
+
+    if (!Sanitizer.isValidMobileNo(mobileNo)) {
+        return req.forwardWithError("Invalid Mobile No", 400);
+    }
+
+    const pool = Database.getPool();
+
+    const userExistsQuery = await pool.query("Select * from users where id=$1 or mobile_no=$2", [id, mobileNo]);
+    if (!userExistsQuery.rowCount||userExistsQuery.rowCount > 0) {
+        return req.forwardWithError("User Already Exists", 400);
+    }
+
+
+})
 export default router;
