@@ -9,6 +9,11 @@ const app = express()
 app.use(express.json())
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
+app.use((req,res,next)=>{
+    console.log(req.originalUrl)
+    next()
+})
 app.use((req,res,next)=>{
     req.forwardWithError = (error: string, errorCode: number=400)=>{
         res.status(errorCode).send({message:error})

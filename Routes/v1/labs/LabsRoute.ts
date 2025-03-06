@@ -110,12 +110,13 @@ router.post('/',async (req,res)=>{
             return req.forwardWithError("Invalid Floor No")
         }
 
-        const queryResult = await client.query<Lab>("Insert into labs(name,description,block_id,incharge_id,floor) values($1,$2,$3,$4,$5)",[name,des,block_id,incharge_mob_no,floor])
+        const queryResult = await client.query<Lab>("Insert into labs(name,description,block_id,incharge_no,floor) values($1,$2,$3,$4,$5)",[name,des,block_id,incharge_mob_no,floor])
         if(queryResult.rowCount===0){
             return req.forwardWithError("Failed to Create Lab")
         }
         return req.forwardWithMessage("Lab Created Successfully")
     }catch (e){
+        console.error(e)
         return req.forwardWithError("Failed to Create Lab")
     }finally {
         client.release()

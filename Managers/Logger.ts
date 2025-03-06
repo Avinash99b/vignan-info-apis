@@ -35,6 +35,10 @@ class Logger {
     static getLogger(){
         return this.logger;
     }
+
+    static logAction(user:string,action: string, message: string){
+
+    }
 }
 
 export default Logger;

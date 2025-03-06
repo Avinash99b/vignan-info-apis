@@ -81,7 +81,7 @@ class Sanitizer {
             return false;
         }
 
-        return number.length < 6
+        return number.length > 6
 
     }
 

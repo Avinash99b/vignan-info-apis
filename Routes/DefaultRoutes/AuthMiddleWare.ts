@@ -8,7 +8,7 @@ function validateToken(token: string): { authenticated: boolean, payload?: JWTPa
         return {authenticated: false};
     }
 
-    const result = Auth.verifyToken(token as string)
+    const result = Auth.verifyToken(token)
     if (!result || !result.data) {
         return {authenticated: false};
     }
@@ -16,7 +16,7 @@ function validateToken(token: string): { authenticated: boolean, payload?: JWTPa
 }
 
 export async function UserAuthMiddleWare(req: Request, res: Response, next: NextFunction) {
-    const result = validateToken(req.query.token as string);
+    const result = validateToken(String(req.query.token));
     if (!result || !result.payload) {
         return req.forwardWithError("Invalid Token", 401)
     }
